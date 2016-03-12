@@ -96,7 +96,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         final Intent intent = new Intent(this, LoginActivity.class);
 
-        StringRequest request = new StringRequest(Request.Method.POST, Config.login_url, new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.POST, Config.register_url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
                 try {

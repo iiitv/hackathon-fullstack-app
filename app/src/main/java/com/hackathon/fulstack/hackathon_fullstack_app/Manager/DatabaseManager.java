@@ -152,7 +152,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     public void get_new_feed_all() {
-        StringRequest request = new StringRequest(Request.Method.POST, Config.login_url, new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.POST, Config.all_feed_url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
 
@@ -216,7 +216,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     public void get_new_feeds(final int subs_ids) {
-        StringRequest request = new StringRequest(Request.Method.POST, Config.login_url, new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.POST, Config.single_feed_url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
 
