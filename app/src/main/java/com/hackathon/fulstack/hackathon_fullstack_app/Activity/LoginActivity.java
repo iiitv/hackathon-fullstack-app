@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     EditText usernameText;
     EditText passwordText;
-    Button login_button;
+    Button login_button, register_button;
 
     ProgressDialog loading_dial;
     SessionManager session;
@@ -53,34 +53,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         usernameText = (EditText) findViewById(R.id.username);
         passwordText = (EditText) findViewById(R.id.password);
         login_button = (Button) findViewById(R.id.log_in_button);
+        register_button = (Button) findViewById(R.id.registration);
         loading_dial = new ProgressDialog(this);
         loading_dial.setCancelable(false);
 
         login_button.setOnClickListener(this);
         login_button.setOnKeyListener(this);
-    }
-
-    public String get_hash(String str) {
-        StringBuffer sb = new StringBuffer();
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(str.toString().getBytes("UTF-8"));
-            byte[] ret = md.digest();
-            for (int i = 0; i < ret.length; i++) {
-                sb.append(Integer.toString((ret[i] & 0xff) + 0x100, 16).substring(1));
-            }
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return sb.toString();
+        register_button.setOnClickListener(this);
     }
 
     public void attempt_login() {
         final String username = usernameText.getText().toString();
         String password = passwordText.getText().toString();
-        final String phash = password;//get_hash(password);
+        final String phash = password;
 
         if(password.length() < 1 || username.length() < 1) {
             loading_dial.hide();
@@ -180,6 +165,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             attempt_login();
         }
+
+        if(v.getId() == R.id.registration) {
+            startActivity( new Intent(this, RegisterActivity.class) );
+        }
+
     }
 
     @Override
