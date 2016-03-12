@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -20,7 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +28,8 @@ import java.util.Map;
  */
 public class DatabaseManager extends SQLiteOpenHelper{
 
-    private static DatabaseManager instance;
     private static final String log = "Database Manager";
+    private static DatabaseManager instance;
     SessionManager session;
     Context context;
 
@@ -59,7 +57,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
                 "uname text not null," +
                 "fname text not null," +
                 "lname text," +
-                "email text noy null" +
+                "email text not null" +
                 ");" ;
         db.execSQL(sql);
         Log.i(log, "Created table userinfo");
@@ -292,4 +290,29 @@ public class DatabaseManager extends SQLiteOpenHelper{
 
         db.execSQL(sql);
     }
+
+    public void add_dummy_data() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String sql = "delete from userinfo;\n" +
+                "delete from preferences;\n" +
+                "delete from cache;\n" +
+                "insert into userinfo values(1, test, Test, User, no@no.no);\n" +
+                "insert into preferences values(1, 1, search1, link11, refined11);\n" +
+                "insert into preferences values(2, 1, search1, link12, refined12);\n" +
+                "insert into preferences values(3, 2, search2, link21, refined21);\n" +
+                "insert into preferences values(4, 2, search2, link22, refined22);\n" +
+                "insert into preferences values(4, 3, search3, link22, refined22);\n" +
+                "insert into cache values(fb, content1, iu1, 1, u1, \'2016-03-13 10:10:10 \');\n" +
+                "insert into cache values(tw, content2, iu2, 1, u2, \'2016-03-13 10:10:12 \');\n" +
+                "insert into cache values(yt, content3, iu3, 1, u3, \'2016-03-13 10:10:13 \');\n" +
+                "insert into cache values(fb, content4, iu4, 2, u4, \'2016-03-13 10:10:14 \');\n" +
+                "insert into cache values(tw, content5, iu5, 2, u5, \'2016-03-13 10:10:15 \');\n" +
+                "insert into cache values(fb, content6, iu6, 3, u6, \'2016-03-13 10:10:16 \');\n" +
+                "insert into cache values(fb, content7, iu7, 4, u7, \'2016-03-13 10:10:17 \');\n";
+
+        db.execSQL(sql);
+
+    }
+
 }
