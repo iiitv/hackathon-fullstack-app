@@ -2,12 +2,11 @@ package com.hackathon.fulstack.hackathon_fullstack_app.Activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -29,14 +28,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
     EditText usernameText;
     EditText passwordText;
@@ -67,7 +63,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String password = passwordText.getText().toString();
         final String phash = password;
 
-        if(password.length() < 1 || username.length() < 1) {
+        if (password.length() < 1 || username.length() < 1) {
             loading_dial.hide();
             Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
             return;
@@ -79,7 +75,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onResponse(String s) {
                 try {
-                    Log.i("Login Response",s);
+                    Log.i("Login Response", s);
                     JSONObject loginOBJ = new JSONObject(s);
                     if (loginOBJ.getInt("status") == 200) {
 
@@ -96,12 +92,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         ArrayList<Preference> arr = new ArrayList<>();
                         JSONArray jarr = loginOBJ.getJSONArray("subscriptions");
 
-                        for(int i = 0 ; i < jarr.length() ; i ++ ) {
+                        for (int i = 0; i < jarr.length(); i++) {
                             JSONObject temp = (JSONObject) jarr.get(i);
                             long subs_id = temp.getInt("subsid");
                             String search_param = temp.getString("searchparam");
                             JSONArray jarrinner = temp.getJSONArray("links");
-                            for(int j = 0 ; j < jarrinner.length() ; j ++ ) {
+                            for (int j = 0; j < jarrinner.length(); j++) {
                                 JSONObject tempinner = (JSONObject) jarrinner.get(i);
                                 String link = tempinner.getString("link");
                                 long pid = tempinner.getLong("pid");
@@ -118,7 +114,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             }
                         }
                         DatabaseManager.getInstance(getApplicationContext()).add_preferences(arr);
-                        session.setLoginStatus(true);
+                        SessionManager.setLoginStatus(true);
                         session.setUser(username);
                         DatabaseManager.getInstance(getApplicationContext()).get_new_feed_all();
                         loading_dial.hide();
@@ -158,7 +154,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        if( v.getId() == R.id.log_in_button) {
+        if (v.getId() == R.id.log_in_button) {
             loading_dial.setMessage("Logging In");
             loading_dial.setIndeterminate(true);
             loading_dial.show();
@@ -166,15 +162,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             attempt_login();
         }
 
-        if(v.getId() == R.id.registration) {
-            startActivity( new Intent(this, RegisterActivity.class) );
+        if (v.getId() == R.id.registration) {
+            startActivity(new Intent(this, RegisterActivity.class));
         }
 
     }
 
     @Override
     public boolean onKey(View v, int i, KeyEvent event) {
-        if(i== KeyEvent.ACTION_DOWN && i== KeyEvent.KEYCODE_ENTER){
+        if (i == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
             Log.e("Login", "enter from");
             attempt_login();
         }

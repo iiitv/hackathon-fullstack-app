@@ -1,10 +1,9 @@
 package com.hackathon.fulstack.hackathon_fullstack_app.Activity;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,17 +17,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.AppManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.Config;
-import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.SessionManager;
-import com.hackathon.fulstack.hackathon_fullstack_app.Models.Preference;
-import com.hackathon.fulstack.hackathon_fullstack_app.Models.WTFUser;
 import com.hackathon.fulstack.hackathon_fullstack_app.R;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.register) {
+        if (v.getId() == R.id.register) {
             fnameStr = fname.getText().toString();
             lnameStr = lname.getText().toString();
             emailStr = email.getText().toString();
@@ -80,21 +74,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         Log.i(
                 "Registration fields",
                 fnameStr + " " + lnameStr + " " + emailStr + " " + usernameStr + " " + passwordStr + " " + passwordAgainStr
-                );
+        );
 
-        if(fnameStr.length()<1 || lnameStr.length()<1 || emailStr.length()<1 || usernameStr.length()<1 || passwordAgainStr.length()<1 || passwordStr.length()<1) {
+        if (fnameStr.length() < 1 || lnameStr.length() < 1 || emailStr.length() < 1 || usernameStr.length() < 1 || passwordAgainStr.length() < 1 || passwordStr.length() < 1) {
             Toast.makeText(RegisterActivity.this, "Fields can't be empty.", Toast.LENGTH_SHORT).show();
             loading_dial.hide();
             return;
         }
 
-        if(!emailStr.contains("@") || !emailStr.contains(".")) {
+        if (!emailStr.contains("@") || !emailStr.contains(".")) {
             Toast.makeText(RegisterActivity.this, "Invalid E-Mail ID..", Toast.LENGTH_SHORT).show();
             loading_dial.hide();
             return;
         }
 
-        if(!passwordAgainStr.matches(passwordStr)) {
+        if (!passwordAgainStr.matches(passwordStr)) {
             Toast.makeText(RegisterActivity.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
             loading_dial.hide();
             return;
@@ -109,12 +103,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                     JSONObject obj = new JSONObject(s);
 
-                    if(obj.getInt("status") == 200) {
+                    if (obj.getInt("status") == 200) {
                         loading_dial.hide();
                         Toast.makeText(getApplicationContext(), "Registered on WTF", Toast.LENGTH_SHORT).show();
                         startActivity(intent);
-                    }
-                    else {
+                    } else {
                         loading_dial.hide();
                         Toast.makeText(getApplicationContext(), "Error : " + obj.getString("error"), Toast.LENGTH_SHORT).show();
                     }

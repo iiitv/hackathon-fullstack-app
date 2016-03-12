@@ -15,64 +15,60 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
-public class AppManager extends Application
-{
-    public static final String TAG=AppManager.class.getSimpleName();
-    private RequestQueue bRequestQueue;
+public class AppManager extends Application {
+    public static final String TAG = AppManager.class.getSimpleName();
     private static AppManager bInstance;
-    Context baseContext;
     private static ImageLoader imageLoader;
+    Context baseContext;
+    private RequestQueue bRequestQueue;
 
-    @Override
-    public void onCreate()
-    {
-        super.onCreate();
-        bInstance = this;
+    public static synchronized ImageLoader getImageLoader(Context context) {
 
-    }
+        if (imageLoader == null) {
+            imageLoader = new ImageLoader(Volley.newRequestQueue(context), new ImageLoader.ImageCache() {
+                LruCache<String, Bitmap> cache = new LruCache<>(4096);
 
-    public static synchronized ImageLoader getImageLoader(Context context){
-
-        if(imageLoader==null){
-            imageLoader= new ImageLoader(Volley.newRequestQueue(context),new ImageLoader.ImageCache(){
-                LruCache<String ,Bitmap> cache= new LruCache<>(4096);
                 @Override
-                public Bitmap getBitmap(String url){
+                public Bitmap getBitmap(String url) {
                     return cache.get(url);
                 }
 
                 @Override
                 public void putBitmap(String url, Bitmap bmp) {
-                    cache.put(url,bmp);
+                    cache.put(url, bmp);
                 }
             });
         }
         return imageLoader;
     }
 
-    public static synchronized AppManager getInstance()
-    {
+    public static synchronized AppManager getInstance() {
 
-        if(bInstance==null){
+        if (bInstance == null) {
 
-            bInstance=new AppManager();
+            bInstance = new AppManager();
         }
 
         return bInstance;
     }
 
-    public RequestQueue getRequestQueue(Context context)
-    {
-        if(bRequestQueue==null)
-        {
-            bRequestQueue= Volley.newRequestQueue(context);
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        bInstance = this;
+
+    }
+
+    public RequestQueue getRequestQueue(Context context) {
+        if (bRequestQueue == null) {
+            bRequestQueue = Volley.newRequestQueue(context);
         }
         return bRequestQueue;
     }
 
-    public <T> void addToRequestQueue(Request<T> req , String tag,Context context){
-        req.setTag(TextUtils.isEmpty(tag)?TAG:tag);
-        baseContext=context;
+    public <T> void addToRequestQueue(Request<T> req, String tag, Context context) {
+        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
+        baseContext = context;
         getRequestQueue(context).add(req);
 
     }

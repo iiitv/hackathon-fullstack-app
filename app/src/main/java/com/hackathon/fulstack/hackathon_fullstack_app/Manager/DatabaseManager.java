@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * Created by pratyush on 12/3/16.
  */
-public class DatabaseManager extends SQLiteOpenHelper{
+public class DatabaseManager extends SQLiteOpenHelper {
 
     private static final String log = "Database Manager";
     private static DatabaseManager instance;
@@ -58,7 +58,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
                 "fname text not null," +
                 "lname text," +
                 "email text not null" +
-                ");" ;
+                ");";
         db.execSQL(sql);
         Log.i(log, "Created table userinfo");
 
@@ -68,7 +68,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
                 "search_param text not null," +
                 "link text not null," +
                 "refined text not null" +
-                ");" ;
+                ");";
         db.execSQL(sql);
         Log.i(log, "Created table preferences");
 
@@ -79,7 +79,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
                 "pid integer references preference(pid)," +
                 "url text not null," +
                 "pub_time text not null" +
-                ");" ;
+                ");";
         db.execSQL(sql);
         Log.i(log, "Created table cache");
     }
@@ -99,7 +99,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getReadableDatabase();
 
         String sql = "select * from preferences where pid = " + pid + ";";
-        Cursor c = db.rawQuery(sql,null);
+        Cursor c = db.rawQuery(sql, null);
 
         String search_param, link, refine;
         c.moveToFirst();
@@ -142,7 +142,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
         String sql = "delete from preferences;\n";
 
-        for(int i = 0 ; i < arr.size() ; i ++ ) {
+        for (int i = 0; i < arr.size(); i++) {
             Preference temp = arr.get(i);
             sql = sql +
                     "insert into preferences values(" + temp.pid + "," + temp.subs_id + "," + temp.search_param + "," + temp.link + "," + temp.refine + ");\n";
@@ -163,18 +163,18 @@ public class DatabaseManager extends SQLiteOpenHelper{
                 try {
                     JSONObject response = new JSONObject(s);
 
-                    if(response.getInt("status") == 0) {
+                    if (response.getInt("status") == 0) {
                         JSONArray jarr = response.getJSONArray("feeds");
 
                         String sql = "";
 
-                        for(int i = 0 ; i < jarr.length() ; i ++ ) {
+                        for (int i = 0; i < jarr.length(); i++) {
                             JSONObject temp = (JSONObject) jarr.get(i);
                             sql = sql +
                                     "insert into cache values(" +
                                     temp.getString("network") + "," +
-                                    temp.getString("content") + "," ;
-                            if (temp.has("imgurl") )
+                                    temp.getString("content") + ",";
+                            if (temp.has("imgurl"))
                                 sql = sql + temp.getString("imgurl");
                             else
                                 sql = sql + "";
@@ -182,13 +182,12 @@ public class DatabaseManager extends SQLiteOpenHelper{
                                     temp.getInt("pid") + "," +
                                     temp.getString("url") + "," +
                                     temp.getString("pubtime") +
-                                    ");" ;
+                                    ");";
 
                         }
 
                         db.execSQL(sql);
-                    }
-                    else
+                    } else
                         Log.e("Database Manager", "Unable to fetch feeds");
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -205,7 +204,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username",session.getUser());
+                params.put("username", session.getUser());
                 return params;
             }
         };
@@ -223,12 +222,12 @@ public class DatabaseManager extends SQLiteOpenHelper{
 
                 SQLiteDatabase db = getWritableDatabase();
 
-                String sql = "delete from cache where pid in (select pid from preferences where subsid = " + subs_ids + ");" ;
+                String sql = "delete from cache where pid in (select pid from preferences where subsid = " + subs_ids + ");";
 
                 try {
                     JSONObject response = new JSONObject(s);
 
-                    if( response.getInt("status") == 200 ) {
+                    if (response.getInt("status") == 200) {
 
                         db.execSQL(sql);
 
@@ -236,13 +235,13 @@ public class DatabaseManager extends SQLiteOpenHelper{
 
                         sql = "";
 
-                        for(int i = 0 ; i < jarr.length() ; i ++ ) {
+                        for (int i = 0; i < jarr.length(); i++) {
                             JSONObject temp = (JSONObject) jarr.get(i);
                             sql = sql +
                                     "insert into cache values(" +
                                     temp.getString("network") + "," +
-                                    temp.getString("content") + "," ;
-                            if (temp.has("imgurl") )
+                                    temp.getString("content") + ",";
+                            if (temp.has("imgurl"))
                                 sql = sql + temp.getString("imgurl");
                             else
                                 sql = sql + "";
@@ -250,7 +249,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
                                     temp.getInt("pid") + "," +
                                     temp.getString("url") + "," +
                                     temp.getString("pubtime") +
-                                    ");" ;
+                                    ");";
                         }
 
                         db.execSQL(sql);
@@ -270,7 +269,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username",session.getUser());
+                params.put("username", session.getUser());
                 params.put("subsid", String.valueOf(subs_ids));
                 return params;
             }
@@ -286,7 +285,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
 
         String sql = "delete from userinfo;\n" +
-                "insert into userinfo values (" + wtfUser.uid + "," + wtfUser.uname + "," + wtfUser.fname + "," + wtfUser.uname + "," + wtfUser.email + ");" ;
+                "insert into userinfo values (" + wtfUser.uid + "," + wtfUser.uname + "," + wtfUser.fname + "," + wtfUser.uname + "," + wtfUser.email + ");";
 
         db.execSQL(sql);
     }
