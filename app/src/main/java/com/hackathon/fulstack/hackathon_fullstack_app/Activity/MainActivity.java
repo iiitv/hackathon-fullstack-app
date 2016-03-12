@@ -3,6 +3,7 @@ package com.hackathon.fulstack.hackathon_fullstack_app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.provider.ContactsContract;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,8 +16,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.SessionManager;
+import com.hackathon.fulstack.hackathon_fullstack_app.Models.Preference;
+import com.hackathon.fulstack.hackathon_fullstack_app.Models.WTFUser;
 import com.hackathon.fulstack.hackathon_fullstack_app.R;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         session = new SessionManager(this);
+
+        simulate_data();
 
         if(!session.isLoggedIn()) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -49,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
     private void addDrawerItems() {
         String[] osArray = { "Roger Federer", "Ray Kon", "Yuvraj", "Indian Fashion", "Linux" };
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
@@ -123,4 +132,22 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void simulate_data() {
+        session.setLoginStatus(true);
+        session.setUser("test");
+
+        ArrayList<Preference> arr = new ArrayList<>();
+
+        arr.add( new Preference(1,1,"search_param1", "link11", "refined11") );
+        arr.add( new Preference(2,1,"search_param1", "link12", "refined11") );
+        arr.add( new Preference(3,2,"search_param2", "link21", "refined21") );
+        arr.add( new Preference(4,2,"search_param2", "link22", "refined22") );
+        arr.add( new Preference(4,3,"search_param3", "link22", "refined22") );
+
+        DatabaseManager.getInstance(this).add_preferences(arr);
+        DatabaseManager.getInstance(this).add_user(new WTFUser(1, "test", "Test", "User", "email@nowhere.com"));
+
+    }
+
 }

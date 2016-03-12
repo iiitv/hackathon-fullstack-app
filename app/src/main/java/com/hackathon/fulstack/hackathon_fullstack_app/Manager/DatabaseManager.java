@@ -142,7 +142,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
 
     public void add_preferences(ArrayList<Preference> arr) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String sql = "delete * from preferences;\n";
+        String sql = "delete from preferences;\n";
 
         for(int i = 0 ; i < arr.size() ; i ++ ) {
             Preference temp = arr.get(i);
@@ -160,7 +160,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
 
                 SQLiteDatabase db = getWritableDatabase();
 
-                db.execSQL("delete * from cache;");
+                db.execSQL("delete from cache;");
 
                 try {
                     JSONObject response = new JSONObject(s);
@@ -287,7 +287,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
     public void add_user(WTFUser wtfUser) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String sql = "delete * from userinfo;\n" +
+        String sql = "delete from userinfo;\n" +
                 "insert into userinfo values (" + wtfUser.uid + "," + wtfUser.uname + "," + wtfUser.fname + "," + wtfUser.uname + "," + wtfUser.email + ");" ;
 
         db.execSQL(sql);
