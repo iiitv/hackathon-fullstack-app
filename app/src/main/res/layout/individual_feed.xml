@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cardView="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/cardview"
+    cardView:cardBackgroundColor="#ffffff"
+    cardView:cardCornerRadius="2dp"
+    android:layout_margin="5dp"
+    android:elevation="5dp">
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:elevation="10dp"
+            android:id="@+id/above"
+            >
+
+            <LinearLayout
+                android:id="@+id/upperSection"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="118dp"
+                android:weightSum="3">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:paddingTop="5dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textSize="20dp"
+                        android:id="@+id/TagChar"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:text="A"
+                        android:textColor="#ffffff"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:background="@drawable/tag_bg"
+                        />
+
+                </RelativeLayout>
+
+
+                <TextView
+                    android:textSize="15dp"
+
+                    android:id="@+id/refine"
+                    android:layout_height="40dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:layout_width="wrap_content"
+                    android:text="refine"
+                    />
+                <TextView
+                    android:textSize="15dp"
+
+                    android:id="@+id/divi"
+                    android:layout_height="40dp"
+                    android:layout_width="20dp"
+                    android:text="->"
+                    />
+                <TextView
+                    android:textSize="15dp"
+                    android:id="@+id/actual"
+                    android:paddingLeft="10dp"
+                    android:layout_height="40dp"
+                    android:layout_width="wrap_content"
+                    android:text="actual"
+                    />
+                <TextView
+
+                    android:textSize="15dp"
+                    android:id="@+id/time"
+                    android:layout_height="40dp"
+                    android:layout_width="match_parent"
+                    android:text="2 mins"
+                    android:paddingRight="5dp"
+                    android:gravity="right"
+                    />
+
+
+
+
+
+
+
+
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:background="@drawable/post_divider"
+                android:layout_below="@+id/upperSection"/>
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:id="@+id/lowerSection"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_below="@+id/above"
+            >
+            <TextView
+                android:textColor="#000000"
+                android:padding="13dp"
+                android:textSize="15dp"
+                android:text="hello dear how are u. this is tlest text for the textview.How is the feel of card design . theset seems to be too bcu. hello ankit how are u this is test for uouankd.this ifo not ant thisthandk thandks helllo"
+                android:id="@+id/textPost"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+
+         </RelativeLayout>
+
+
+
+
+
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

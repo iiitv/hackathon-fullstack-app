@@ -5,12 +5,25 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.hackathon.fulstack.hackathon_fullstack_app.Models.Feed;
 import com.hackathon.fulstack.hackathon_fullstack_app.Models.Preference;
+import com.hackathon.fulstack.hackathon_fullstack_app.Models.WTFUser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by pratyush on 12/3/16.
@@ -50,6 +63,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
 
         sql = "create table if not exists preferences (" +
                 "pid integer primary key not null," +
+                "subs_id integer not null," +
                 "search_param text not null," +
                 "link text not null," +
                 "refined text not null" +
@@ -87,13 +101,15 @@ public class DatabaseManager extends SQLiteOpenHelper{
         String sql = "select * from preferences where pid = " + pid + ";";
         Cursor c = db.rawQuery(sql,null);
 
-        String search_param, link ;
+        String search_param, link, refine;
         c.moveToFirst();
 
+        Long subs_id = c.getLong(c.getColumnIndex("subs_id"));
         search_param = c.getString(c.getColumnIndex("search_param"));
         link = c.getString(c.getColumnIndex("link"));
+        refine = c.getString(c.getColumnIndex("refine"));
 
-        return new Preference(pid, search_param, link);
+        return new Preference(pid, subs_id, search_param, link, refine);
 
     }
 
@@ -123,4 +139,60 @@ public class DatabaseManager extends SQLiteOpenHelper{
         return ret;
     }
 
+    public void add_preferences(ArrayList<Preference> arr) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sql = "delete * from preferences;\n";
+
+        for(int i = 0 ; i < arr.size() ; i ++ ) {
+            Preference temp = arr.get(i);
+            sql = sql +
+                    "insert into preferences values(" + temp.pid + "," + temp.subs_id + "," + temp.search_param + "," + temp.link + "," + temp.refine + ");\n";
+        }
+
+        db.execSQL(sql);
+    }
+
+    public void get_new_feed_all() {
+        StringRequest request = new StringRequest(Request.Method.POST, Config.login_url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+
+                try {
+                    JSONObject response = new JSONObject(s);
+
+                    String status = response.getString("success");
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Log.e("Login", " " + volleyError);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                return params;
+            }
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+    }
+
+    public void add_user(WTFUser wtfUser) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String sql = "delete * from userinfo;\n" +
+                "insert into userinfo values (" + wtfUser.uid + "," + wtfUser.uname + "," + wtfUser.fname + "," + wtfUser.uname + "," + wtfUser.email + ");" ;
+
+        db.execSQL(sql);
+    }
 }

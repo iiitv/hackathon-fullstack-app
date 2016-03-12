@@ -1,29 +1,38 @@
 package com.hackathon.fulstack.hackathon_fullstack_app.Activity;
 
 import android.app.ProgressDialog;
-import android.support.design.widget.Snackbar;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.hackathon.fulstack.hackathon_fullstack_app.Manager.AppManager;
+import com.hackathon.fulstack.hackathon_fullstack_app.Manager.Config;
+import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.SessionManager;
+import com.hackathon.fulstack.hackathon_fullstack_app.Models.Preference;
+import com.hackathon.fulstack.hackathon_fullstack_app.Models.WTFUser;
 import com.hackathon.fulstack.hackathon_fullstack_app.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,12 +49,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
         usernameText = (EditText) findViewById(R.id.username);
         passwordText = (EditText) findViewById(R.id.password);
         login_button = (Button) findViewById(R.id.log_in_button);
         loading_dial = new ProgressDialog(this);
+        loading_dial.setCancelable(false);
 
         login_button.setOnClickListener(this);
         login_button.setOnKeyListener(this);
@@ -68,24 +78,65 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return sb.toString();
     }
 
-    public boolean attempt_login() {
+    public void attempt_login() {
         final String username = usernameText.getText().toString();
         String password = passwordText.getText().toString();
-        final String phash = get_hash(password);
+        final String phash = password;//get_hash(password);
 
-        if(password.length() < 1 || username.length() < 1)
-            return false;
+        if(password.length() < 1 || username.length() < 1) {
+            loading_dial.hide();
+            Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        StringRequest request = new StringRequest(Request.Method.POST, "SomeURL", new Response.Listener<String>() {
+        final Intent intent = new Intent(this, MainActivity.class);
+
+        StringRequest request = new StringRequest(Request.Method.POST, Config.login_url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
                 try {
+                    Log.i("Login Response",s);
                     JSONObject loginOBJ = new JSONObject(s);
-                    int error_code = loginOBJ.getInt("status");
-                    if (error_code == 0) {
+                    String error_code = loginOBJ.getString("success");
+                    if (error_code.matches("true")) {
+                        session.setLoginStatus(true);
 
-                        //Success
+                        DatabaseManager.getInstance(getApplicationContext()).add_user(
+                                new WTFUser(
+                                        loginOBJ.getInt("id"),
+                                        loginOBJ.getString("username"),
+                                        loginOBJ.getString("firstname"),
+                                        loginOBJ.getString("lastname"),
+                                        loginOBJ.getString("email")
+                                )
+                        );
 
+                        ArrayList<Preference> arr = new ArrayList<>();
+                        JSONArray jarr = loginOBJ.getJSONArray("subscriptions");
+
+                        for(int i = 0 ; i < jarr.length() ; i ++ ) {
+                            JSONObject temp = (JSONObject) jarr.get(i);
+                            long subs_id = temp.getInt("subsid");
+                            String search_param = temp.getString("searchparam");
+                            JSONArray jarrinner = temp.getJSONArray("links");
+                            for(int j = 0 ; j < jarrinner.length() ; j ++ ) {
+                                JSONObject tempinner = (JSONObject) jarrinner.get(i);
+                                String link = tempinner.getString("link");
+                                long pid = tempinner.getLong("pid");
+                                String refine = tempinner.getString("refine");
+                                arr.add(
+                                        new Preference(
+                                                pid,
+                                                subs_id,
+                                                search_param,
+                                                link,
+                                                refine
+                                        )
+                                );
+                            }
+                        }
+                        DatabaseManager.getInstance(getApplicationContext()).add_preferences(arr);
+                        startActivity(intent);
                     } else {
                         loading_dial.hide();
                         Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
@@ -110,23 +161,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 return params;
             }
         };
-        return true;
+        request.setRetryPolicy(new DefaultRetryPolicy(10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        AppManager.getInstance().addToRequestQueue(request, "login", this);
+
     }
 
     @Override
     public void onClick(View v) {
         if( v.getId() == R.id.log_in_button) {
-            if ( !attempt_login() ) {
-                Toast.makeText(this, "Invalid Login", Toast.LENGTH_SHORT ).show();
-            }
-            else {
-                //take steps
-            }
+            loading_dial.setMessage("Logging In");
+            loading_dial.setIndeterminate(true);
+            loading_dial.show();
+
+            attempt_login();
         }
     }
 
     @Override
-    public boolean onKey(View v, int keyCode, KeyEvent event) {
+    public boolean onKey(View v, int i, KeyEvent event) {
+        if(i== KeyEvent.ACTION_DOWN && i== KeyEvent.KEYCODE_ENTER){
+            Log.e("Login", "enter from");
+            attempt_login();
+        }
         return false;
     }
 }

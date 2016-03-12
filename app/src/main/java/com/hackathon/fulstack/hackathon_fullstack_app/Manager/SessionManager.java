@@ -10,28 +10,25 @@ import android.database.sqlite.SQLiteDatabase;
 public class SessionManager {
 
     private static final String KEY="isLoggedIn";
-    private static final String PREF_NAME="collegare";
+    private static final String PREF_NAME="hackathon-fullstack-app";
     private static final String TAG=SessionManager.class.getSimpleName();
     static SharedPreferences.Editor editor;
     static SharedPreferences preferences;
     int Mode=0;
     Context _context;
 
-    public SessionManager(Context context)
-    {
+    public SessionManager(Context context) {
         this._context=context;
         preferences=context.getSharedPreferences(PREF_NAME,Mode);
         editor=preferences.edit();
     }
 
-    public static void setLoginStatus(boolean state)
-    {
+    public static void setLoginStatus(boolean state) {
         editor.putBoolean(KEY,state);
         editor.commit();
     }
 
-    public SessionManager(){
-
+    public boolean isLoggedIn() {
+        return preferences.getBoolean(KEY,false);
     }
-
 }
