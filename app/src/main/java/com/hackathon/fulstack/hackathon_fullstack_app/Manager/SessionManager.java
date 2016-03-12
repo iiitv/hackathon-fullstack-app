@@ -31,4 +31,13 @@ public class SessionManager {
     public boolean isLoggedIn() {
         return preferences.getBoolean(KEY,false);
     }
+
+    public void setUser(String user) {
+        editor.putString("user",user);
+        editor.commit();
+    }
+
+    public String getUser() {
+        return preferences.getString("user", "");
+    }
 }

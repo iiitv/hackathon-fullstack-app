@@ -6,16 +6,14 @@ package com.hackathon.fulstack.hackathon_fullstack_app.Models;
 public class Feed {
 
     String src;
-    int post_type;
     String content;
     String image_url;
     long pid;
     String url;
     String time;
 
-    public Feed(String src, int post_type, String content, String image_url, long pid, String url, String time) {
+    public Feed(String src, String content, String image_url, long pid, String url, String time) {
         this.src = src;
-        this.post_type = post_type;
         this.content = content;
         this.image_url = image_url;
         this.pid = pid;
@@ -23,9 +21,8 @@ public class Feed {
         this.time = time;
     }
 
-    public Feed(String src, int post_type, String content, long pid, String url, String time) {
+    public Feed(String src, String content, long pid, String url, String time) {
         this.src = src;
-        this.post_type = post_type;
         this.content = content;
         this.image_url = "";
         this.pid = pid;

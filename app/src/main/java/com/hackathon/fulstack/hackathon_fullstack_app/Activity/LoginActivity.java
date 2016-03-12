@@ -97,9 +97,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 try {
                     Log.i("Login Response",s);
                     JSONObject loginOBJ = new JSONObject(s);
-                    String error_code = loginOBJ.getString("success");
-                    if (error_code.matches("true")) {
-                        session.setLoginStatus(true);
+                    if (loginOBJ.getInt("status") == 200) {
 
                         DatabaseManager.getInstance(getApplicationContext()).add_user(
                                 new WTFUser(
@@ -136,6 +134,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             }
                         }
                         DatabaseManager.getInstance(getApplicationContext()).add_preferences(arr);
+                        session.setLoginStatus(true);
+                        session.setUser(username);
+                        DatabaseManager.getInstance(getApplicationContext()).get_new_feed_all();
+                        loading_dial.hide();
                         startActivity(intent);
                     } else {
                         loading_dial.hide();
@@ -143,6 +145,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 } catch (JSONException e) {
                     loading_dial.hide();
+                    Toast.makeText(getApplicationContext(), "Unexpected error occurred.", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }

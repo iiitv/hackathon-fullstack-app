@@ -32,9 +32,12 @@ public class DatabaseManager extends SQLiteOpenHelper{
 
     private static DatabaseManager instance;
     private static final String log = "Database Manager";
+    SessionManager session;
+    Context context;
 
     public DatabaseManager(Context context) {
         super(context, "masterDB", null, 1);
+        this.context = context;
     }
 
     public static DatabaseManager getInstance(Context context) {
@@ -73,7 +76,6 @@ public class DatabaseManager extends SQLiteOpenHelper{
 
         sql = "create table if not exists cache (" +
                 "src text not null," +
-                "type int not null," +
                 "content text," +
                 "img_url text," +
                 "pid integer references preference(pid)," +
@@ -113,12 +115,12 @@ public class DatabaseManager extends SQLiteOpenHelper{
 
     }
 
-    ArrayList<Feed> get_feeds_for_search_parameter(String search_param) {
+    ArrayList<Feed> get_feeds_for_subs_id(int subs_id) {
         ArrayList<Feed> ret = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String sql = "select cache.*  from preference natural join cache where preference.search_param = " + search_param + " order by date(pub_time) desc;";
+        String sql = "select cache.*  from preference natural join cache where preference.search_param = " + subs_id + " order by date(pub_time) desc;";
         Cursor c = db.rawQuery(sql, null);
 
         c.moveToFirst();
@@ -126,7 +128,6 @@ public class DatabaseManager extends SQLiteOpenHelper{
             ret.add(
                     new Feed(
                             c.getString(c.getColumnIndex("src")),
-                            c.getInt(c.getColumnIndex("type")),
                             c.getString(c.getColumnIndex("content")),
                             c.getString(c.getColumnIndex("img_url")),
                             c.getLong(c.getColumnIndex("pid")),
@@ -157,15 +158,43 @@ public class DatabaseManager extends SQLiteOpenHelper{
             @Override
             public void onResponse(String s) {
 
+                SQLiteDatabase db = getWritableDatabase();
+
+                db.execSQL("delete * from cache;");
+
                 try {
                     JSONObject response = new JSONObject(s);
 
-                    String status = response.getString("success");
+                    if(response.getInt("status") == 0) {
+                        JSONArray jarr = response.getJSONArray("feeds");
 
+                        String sql = "";
 
+                        for(int i = 0 ; i < jarr.length() ; i ++ ) {
+                            JSONObject temp = (JSONObject) jarr.get(i);
+                            sql = sql +
+                                    "insert into cache values(" +
+                                    temp.getString("network") + "," +
+                                    temp.getString("content") + "," ;
+                            if (temp.has("imgurl") )
+                                sql = sql + temp.getString("imgurl");
+                            else
+                                sql = sql + "";
+                            sql = sql + "," +
+                                    temp.getInt("pid") + "," +
+                                    temp.getString("url") + "," +
+                                    temp.getString("pubtime") +
+                                    ");" ;
 
+                        }
+
+                        db.execSQL(sql);
+                    }
+                    else
+                        Log.e("Database Manager", "Unable to fetch feeds");
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Log.e("Database Manager", "Unable to fetch feeds");
                 }
 
             }
@@ -178,6 +207,7 @@ public class DatabaseManager extends SQLiteOpenHelper{
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("username",session.getUser());
                 return params;
             }
         };
@@ -185,6 +215,73 @@ public class DatabaseManager extends SQLiteOpenHelper{
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
+        AppManager.getInstance().addToRequestQueue(request, "allfeedupdate", this.context);
+    }
+
+    public void get_new_feeds(final int subs_ids) {
+        StringRequest request = new StringRequest(Request.Method.POST, Config.login_url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+
+                SQLiteDatabase db = getWritableDatabase();
+
+                String sql = "delete from cache where pid in (select pid from preferences where subsid = " + subs_ids + ");" ;
+
+                try {
+                    JSONObject response = new JSONObject(s);
+
+                    if( response.getInt("status") == 200 ) {
+
+                        db.execSQL(sql);
+
+                        JSONArray jarr = response.getJSONArray("feeds");
+
+                        sql = "";
+
+                        for(int i = 0 ; i < jarr.length() ; i ++ ) {
+                            JSONObject temp = (JSONObject) jarr.get(i);
+                            sql = sql +
+                                    "insert into cache values(" +
+                                    temp.getString("network") + "," +
+                                    temp.getString("content") + "," ;
+                            if (temp.has("imgurl") )
+                                sql = sql + temp.getString("imgurl");
+                            else
+                                sql = sql + "";
+                            sql = sql + "," +
+                                    temp.getInt("pid") + "," +
+                                    temp.getString("url") + "," +
+                                    temp.getString("pubtime") +
+                                    ");" ;
+                        }
+
+                        db.execSQL(sql);
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Log.e("Login", " " + volleyError);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("username",session.getUser());
+                params.put("subsid", String.valueOf(subs_ids));
+                return params;
+            }
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        AppManager.getInstance().addToRequestQueue(request, "singlefeedupdate", this.context);
     }
 
     public void add_user(WTFUser wtfUser) {
