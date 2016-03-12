@@ -43,7 +43,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Button login_button;
 
     ProgressDialog loading_dial;
-
     SessionManager session;
 
     @Override
