@@ -29,5 +29,13 @@ public class Feed {
         this.url = url;
         this.time = time;
     }
+    public String getSrc()
+    {
+        return src;
+    }
+    public String getTime()
+    {
+        return time;
+    }
 
 }
