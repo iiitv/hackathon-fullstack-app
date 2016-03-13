@@ -380,12 +380,40 @@ public class DatabaseManager extends SQLiteOpenHelper {
         Log.i("Rows selected", "" + c.getCount());
 
         c.moveToFirst();
-        do {
-            prefs.put(c.getString(c.getColumnIndex("search_param")), new Long(c.getLong(c.getColumnIndex("subs_id"))));
-        } while (c.moveToNext());
+        if (!c.isAfterLast())
+            do {
+                prefs.put(c.getString(c.getColumnIndex("search_param")), new Long(c.getLong(c.getColumnIndex("subs_id"))));
+            } while (c.moveToNext());
 
         c.close();
         db.close();
         return prefs;
+    }
+
+    public ArrayList<Feed> get_feeds() {
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "select * from cache order by Date(pub_time) desc;";
+        Cursor c = db.rawQuery(sql, null);
+
+        ArrayList<Feed> arr = new ArrayList<>();
+
+        c.moveToFirst();
+        if (!c.isAfterLast()) {
+            do {
+                arr.add(
+                        new Feed(
+                                c.getString(c.getColumnIndex("src")),
+                                c.getString(c.getColumnIndex("content")),
+                                c.getString(c.getColumnIndex("img_url")),
+                                c.getLong(c.getColumnIndex("pid")),
+                                c.getString(c.getColumnIndex("url")),
+                                c.getString(c.getColumnIndex("pub_time"))
+                        )
+                );
+            } while (c.moveToNext());
+        }
+        return arr;
     }
 }

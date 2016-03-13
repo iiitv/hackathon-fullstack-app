@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,28 +17,43 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.hackathon.fulstack.hackathon_fullstack_app.Adapters.MyRecyclerViewAdapter;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.SessionManager;
+import com.hackathon.fulstack.hackathon_fullstack_app.Models.Feed;
 import com.hackathon.fulstack.hackathon_fullstack_app.R;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static String LOG_TAG = "CardViewActivity";
     SessionManager session;
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ArrayAdapter mAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
     private String mActivityTitle;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapterRecycler;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        session = new SessionManager(this);
-
         simulate_data();
+
+        session = new SessionManager(this);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerGroups);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapterRecycler = new MyRecyclerViewAdapter(getDataSet(-1));
+        mRecyclerView.setAdapter(mAdapterRecycler);
+
+
 
         if (!session.isLoggedIn()) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -56,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    private ArrayList<Feed> getDataSet(int id) {
+        if (id == -1)
+            return DatabaseManager.getInstance(this).get_feeds();
+        else return null;
+    }
+
 
     private void addDrawerItems() {
         Log.i("MainActivity:", "Setting up drawer");
