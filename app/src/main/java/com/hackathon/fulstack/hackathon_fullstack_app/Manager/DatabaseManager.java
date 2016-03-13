@@ -37,6 +37,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public DatabaseManager(Context context) {
         super(context, "masterDB", null, 1);
         this.context = context;
+        session = new SessionManager(context);
     }
 
     public static DatabaseManager getInstance(Context context) {
@@ -451,5 +452,33 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.close();
 
         return ret;
+    }
+
+    public ArrayList<Feed> get_feeds_by_subscription(int id) {
+        ArrayList<Feed> feeds = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "select * from cache where pid in (select pid from preferences where subs_id = " + id + ") order by Date(pub_time) desc;";
+
+        Cursor c = db.rawQuery(sql, null);
+
+        c.moveToFirst();
+        if (!c.isAfterLast()) {
+            do {
+                feeds.add(
+                        new Feed(
+                                c.getString(c.getColumnIndex("src")),
+                                c.getString(c.getColumnIndex("content")),
+                                c.getString(c.getColumnIndex("img_url")),
+                                c.getLong(c.getColumnIndex("pid")),
+                                c.getString(c.getColumnIndex("url")),
+                                c.getString(c.getColumnIndex("pub_time"))
+                        )
+                );
+            } while (c.moveToNext());
+        }
+
+        return feeds;
     }
 }

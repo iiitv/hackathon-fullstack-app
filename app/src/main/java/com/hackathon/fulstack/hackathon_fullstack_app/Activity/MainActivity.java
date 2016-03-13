@@ -1,5 +1,6 @@
 package com.hackathon.fulstack.hackathon_fullstack_app.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -15,7 +16,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.hackathon.fulstack.hackathon_fullstack_app.Adapters.MyRecyclerViewAdapter;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static String LOG_TAG = "CardViewActivity";
     SessionManager session;
+    Context context;
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ArrayAdapter mAdapter;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         session = new SessionManager(this);
 
-        simulate_data();
+        //simulate_data();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerGroups);
         mRecyclerView.setHasFixedSize(true);
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapterRecycler = new MyRecyclerViewAdapter(getDataSet(-1), this);
         mRecyclerView.setAdapter(mAdapterRecycler);
+        context = this;
 
 
 
@@ -74,23 +76,31 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void set_recycler_adapter(int i) {
+    }
+
     private ArrayList<Feed> getDataSet(int id) {
         if (id == -1)
             return DatabaseManager.getInstance(this).get_feeds();
-        else return null;
+        ArrayList<Feed> c = DatabaseManager.getInstance(this).get_feeds_by_subscription(id);
+
+        Log.i("sds", c.toString());
+        return c;
     }
 
 
     private void addDrawerItems() {
         Log.i("MainActivity:", "Setting up drawer");
-        Map<String, Long> list = DatabaseManager.getInstance(this).get_preference_names();
-        mAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list.keySet().toArray());
+        final Map<String, Long> list = DatabaseManager.getInstance(this).get_preference_names();
+        final String pos[] = list.keySet().toArray(new String[list.size()]);
+        mAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, pos);
         mDrawerList.setAdapter(mAdapter);
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, "Selected Pos: " + position + " ID: " + id, Toast.LENGTH_SHORT).show();
+                int _id = (int) (long) list.get(pos[position]);
+                mRecyclerView.swapAdapter(new MyRecyclerViewAdapter(getDataSet(_id), context), true);
             }
         });
     }

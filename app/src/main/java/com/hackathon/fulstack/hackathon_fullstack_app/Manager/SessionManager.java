@@ -27,6 +27,15 @@ public class SessionManager {
         editor.commit();
     }
 
+    public int get_subs_id() {
+        return preferences.getInt("subs_id", -1);
+    }
+
+    public void set_subs_id(int id) {
+        editor.putInt("subs_id", id);
+        editor.commit();
+    }
+
     public boolean isLoggedIn() {
         return preferences.getBoolean(KEY, false);
     }

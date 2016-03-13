@@ -27,6 +27,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
     Context context;
     private ArrayList<Feed> mDataset;
 
+
     public MyRecyclerViewAdapter(ArrayList<Feed> myDataset, Context context) {
         mDataset = myDataset;
         this.context = context;
@@ -67,6 +68,17 @@ public class MyRecyclerViewAdapter extends RecyclerView
         notifyItemInserted(index);
     }
 
+    public void swap(ArrayList<Feed> a) {
+        mDataset.clear();
+        mDataset.addAll(a);
+        notifyDataSetChanged();
+    }
+
+    public void resetData(ArrayList<Feed> x) {
+        mDataset = x;
+        notifyDataSetChanged();
+    }
+
     public void deleteItem(int index) {
         mDataset.remove(index);
         notifyItemRemoved(index);
@@ -104,4 +116,5 @@ public class MyRecyclerViewAdapter extends RecyclerView
             myClickListener.onItemClick(getAdapterPosition(), v);
         }
     }
+
 }

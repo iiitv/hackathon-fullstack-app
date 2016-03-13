@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         register_button = (Button) findViewById(R.id.registration);
         loading_dial = new ProgressDialog(this);
         loading_dial.setCancelable(false);
+        session = new SessionManager(this);
 
         login_button.setOnClickListener(this);
         login_button.setOnKeyListener(this);
@@ -77,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 try {
                     Log.i("Login Response", s);
                     JSONObject loginOBJ = new JSONObject(s);
-                    if (loginOBJ.getInt("status") == 200) {
+                    if (loginOBJ.getInt("code") == 200) {
 
                         DatabaseManager.getInstance(getApplicationContext()).add_user(
                                 new WTFUser(
@@ -99,9 +100,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             JSONArray jarrinner = temp.getJSONArray("links");
                             for (int j = 0; j < jarrinner.length(); j++) {
                                 JSONObject tempinner = (JSONObject) jarrinner.get(i);
-                                String link = tempinner.getString("link");
+                                String link = tempinner.getString("url");
                                 long pid = tempinner.getLong("pid");
-                                String refine = tempinner.getString("refine");
+                                String refine = tempinner.getString("name");
                                 arr.add(
                                         new Preference(
                                                 pid,
