@@ -54,8 +54,7 @@ public class MainActivity extends AppCompatActivity {
         mAdapterRecycler = new MyRecyclerViewAdapter(getDataSet(-1), this);
         mRecyclerView.setAdapter(mAdapterRecycler);
         context = this;
-
-
+        DatabaseManager.getInstance(getApplicationContext()).get_new_feed_all(mRecyclerView);
 
         if (!session.isLoggedIn()) {
             Intent intent = new Intent(this, LoginActivity.class);

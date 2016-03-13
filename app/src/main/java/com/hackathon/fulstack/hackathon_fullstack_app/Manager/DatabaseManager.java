@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -12,6 +13,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.hackathon.fulstack.hackathon_fullstack_app.Activity.MyRecyclerViewAdapter;
 import com.hackathon.fulstack.hackathon_fullstack_app.Models.Feed;
 import com.hackathon.fulstack.hackathon_fullstack_app.Models.Preference;
 import com.hackathon.fulstack.hackathon_fullstack_app.Models.WTFUser;
@@ -171,18 +173,26 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public void add_preferences(ArrayList<Preference> arr) {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "delete from preferences;\n";
+        db.execSQL(sql);
 
         for (int i = 0; i < arr.size(); i++) {
             Preference temp = arr.get(i);
-            sql = sql +
-                    "insert into preferences values(" + temp.pid + "," + temp.subs_id + "," + temp.search_param + "," + temp.link + "," + temp.refine + ");\n";
+            ContentValues contentValues;
+            contentValues = new ContentValues();
+            contentValues.put("pid", temp.pid);
+            contentValues.put("subs_id", temp.subs_id);
+            contentValues.put("search_param", temp.search_param);
+            contentValues.put("link", temp.link);
+            contentValues.put("refined", temp.refine);
+            Log.i("Insert status", "" + db.insert("preferences", null, contentValues));
+//            sql =
+//                    "insert into preferences values(" + temp.pid + "," + temp.subs_id + "," + temp.search_param + "," + temp.link + "," + temp.refine + ");\n";
+//            db.execSQL(sql);
         }
-
-        db.execSQL(sql);
         db.close();
     }
 
-    public void get_new_feed_all() {
+    public void get_new_feed_all(final RecyclerView mAdapterRecycler) {
         StringRequest request = new StringRequest(Request.Method.POST, Config.all_feed_url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
@@ -193,36 +203,41 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
                 try {
                     JSONObject response = new JSONObject(s);
+                    Log.i("Response for update", s);
 
-                    if (response.getInt("status") == 0) {
+                    if (response.getInt("code") == 200) {
                         JSONArray jarr = response.getJSONArray("feeds");
 
                         String sql = "";
 
                         for (int i = 0; i < jarr.length(); i++) {
                             JSONObject temp = (JSONObject) jarr.get(i);
-                            sql = sql +
-                                    "insert into cache values(" +
-                                    temp.getString("network") + "," +
-                                    temp.getString("content") + ",";
-                            if (temp.has("imgurl"))
-                                sql = sql + temp.getString("imgurl");
+                            sql =
+                                    "insert into cache values(\'" +
+                                            temp.getString("network").replace("\'", "\'\'") + "\',\'" +
+                                            temp.getString("content").replace("\'", "\'\'") + "\',\'";
+                            if (temp.getString("imageurl") == null)
+                                sql = sql + temp.getString("imageurl");
                             else
                                 sql = sql + "";
-                            sql = sql + "," +
-                                    temp.getInt("pid") + "," +
-                                    temp.getString("url") + "," +
-                                    temp.getString("pubtime") +
-                                    ");";
+                            sql = sql + "\'," +
+                                    temp.getInt("pid") + ",\'" +
+                                    temp.getString("url") + "\',\'" +
+                                    temp.getString("time") +
+                                    "\');";
 
+                            db.execSQL(sql);
                         }
 
                         db.close();
+                        ArrayList<Feed> a = get_feeds();
+                        Log.i("Feeds update", a.toString());
+                        mAdapterRecycler.swapAdapter(new MyRecyclerViewAdapter(get_feeds(), context), true);
                     } else
-                        Log.e("Database Manager", "Unable to fetch feeds");
+                        Log.e("Database Manager1", "Unable to fetch feeds");
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.e("Database Manager", "Unable to fetch feeds");
+                    Log.e("Database Manager2", "Unable to fetch feeds");
                 } finally {
                     db.close();
                 }
@@ -237,7 +252,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username", session.getUser());
+                params.put("id", "" + session.getUserID());
                 return params;
             }
         };
@@ -462,8 +477,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
 
         Cursor c = db.rawQuery(sql, null);
+        Log.i("Querry Set new get feed", c.getCount() + "");
 
         c.moveToFirst();
+        if (c.isAfterLast())
+            return new Preference(1, 2, "err", "err", "err");
+
         Preference ret = new Preference(
                 c.getLong(c.getColumnIndex("pid")),
                 c.getLong(c.getColumnIndex("subs_id")),

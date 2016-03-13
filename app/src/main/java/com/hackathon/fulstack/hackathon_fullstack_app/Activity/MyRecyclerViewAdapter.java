@@ -106,14 +106,14 @@ public class MyRecyclerViewAdapter extends RecyclerView
             refine = (TextView) itemView.findViewById(R.id.refine);
             img = (TextView) itemView.findViewById(R.id.TagChar);
             dateTime = (TextView) itemView.findViewById(R.id.time);
-           // content = (TextView) itemView.findViewById(R.id.content);
+            content = (TextView) itemView.findViewById(R.id.content);
             Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            myClickListener.onItemClick(getAdapterPosition(), v);
+//            myClickListener.onItemClick(getAdapterPosition(), v);
         }
     }
 
