@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addDrawerItems() {
-        String[] osArray = {"Roger Federer", "Ray Kon", "Yuvraj", "Indian Fashion", "Linux"};
+        String[] osArray = DatabaseManager.getInstance(this).get_preference_names();
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
         mDrawerList.setAdapter(mAdapter);
 
