@@ -4,7 +4,7 @@
     xmlns:cardView="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardview"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_margin="5dp"
     android:elevation="5dp"
     cardView:cardBackgroundColor="#ffffff"
@@ -14,6 +14,7 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/linearLay"
         android:orientation="vertical"
         android:padding="10dp">
 
@@ -88,27 +89,31 @@
 
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:layout_below="@+id/upperSection"
-                android:background="@drawable/post_divider" />
+
+
+
+
 
 
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/lowerSection"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_below="@+id/above"
             android:orientation="horizontal">
+            <ImageView
+
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/post_divider" />
 
             <TextView
                 android:id="@+id/content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:padding="13dp"
                 android:text="hello dear how are u. this is tlest text for the textview.How is the feel of card design . theset seems to be too bcu. hello ankit how are u this is test for uouankd.this ifo not ant thisthandk thandks helllo"
                 android:textColor="#000000"
