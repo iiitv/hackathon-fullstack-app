@@ -11,11 +11,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.SessionManager;
@@ -56,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         context = this;
 
 
-
         if (!session.isLoggedIn()) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        MenuInflater menuInflater = getMenuInflater();
 
 
     }
@@ -139,12 +141,6 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -162,8 +158,37 @@ public class MainActivity extends AppCompatActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+       // return super.onOptionsItemSelected(item);
+        switch (item.getItemId())
+        {
+            case R.id.menu_bookmark:
+                // Single menu item is selected do something
+                // Ex: launching new activity/screen or show alert message
+                Toast.makeText(this, "Preferences is Selected", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this,add_preference.class);
+                startActivity(intent);
+                return true;
 
-        return super.onOptionsItemSelected(item);
+            case R.id.menu_save:
+                Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
+                SessionManager session = new SessionManager(this);
+                session.setLoginStatus(false);
+
+
+                return true;
+
+            case R.id.menu_search:
+                Toast.makeText(this, "Search is Selected", Toast.LENGTH_SHORT).show();
+                return true;
+
+
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+
+
     }
 
     private void simulate_data() {
@@ -171,5 +196,16 @@ public class MainActivity extends AppCompatActivity {
         session.setUser("test");
         DatabaseManager.getInstance(this).add_dummy_data();
     }
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu, menu);
+        return true;
+    }
 
+    /**
+     * Event Handling for Individual menu item selected
+     * Identify single menu item by it's id
+     * */
 }
+
