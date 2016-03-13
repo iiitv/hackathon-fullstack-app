@@ -1,5 +1,6 @@
 package com.hackathon.fulstack.hackathon_fullstack_app.Manager;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -48,6 +49,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public void IntiateDataBase() {
         SQLiteDatabase db = getWritableDatabase();
         rolldown_tables(db);
+        db.close();
     }
 
     private void rolldown_tables(SQLiteDatabase db) {
@@ -96,7 +98,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     Preference get_preference(long pid) {
 
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
 
         String sql = "select * from preferences where pid = " + pid + ";";
         Cursor c = db.rawQuery(sql, null);
@@ -108,6 +110,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
         search_param = c.getString(c.getColumnIndex("search_param"));
         link = c.getString(c.getColumnIndex("link"));
         refine = c.getString(c.getColumnIndex("refine"));
+        c.close();
+        db.close();
 
         return new Preference(pid, subs_id, search_param, link, refine);
 
@@ -116,7 +120,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     ArrayList<Feed> get_feeds_for_subs_id(int subs_id) {
         ArrayList<Feed> ret = new ArrayList<>();
 
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
 
         String sql = "select cache.*  from preference natural join cache where preference.search_param = " + subs_id + " order by date(pub_time) desc;";
         Cursor c = db.rawQuery(sql, null);
@@ -134,12 +138,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
                     )
             );
         }
+        c.close();
+        db.close();
 
         return ret;
     }
 
     public void add_preferences(ArrayList<Preference> arr) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         String sql = "delete from preferences;\n";
 
         for (int i = 0; i < arr.size(); i++) {
@@ -149,6 +155,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
 
         db.execSQL(sql);
+        db.close();
     }
 
     public void get_new_feed_all() {
@@ -186,12 +193,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
                         }
 
-                        db.execSQL(sql);
+                        db.close();
                     } else
                         Log.e("Database Manager", "Unable to fetch feeds");
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Log.e("Database Manager", "Unable to fetch feeds");
+                } finally {
+                    db.close();
                 }
 
             }
@@ -258,6 +267,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                } finally {
+                    db.close();
                 }
             }
         }, new Response.ErrorListener() {
@@ -282,36 +293,99 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     public void add_user(WTFUser wtfUser) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
 
         String sql = "delete from userinfo;\n" +
                 "insert into userinfo values (" + wtfUser.uid + "," + wtfUser.uname + "," + wtfUser.fname + "," + wtfUser.uname + "," + wtfUser.email + ");";
 
         db.execSQL(sql);
+        db.close();
     }
 
     public void add_dummy_data() {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
 
-        String sql = "delete from userinfo;\n" +
-                "delete from preferences;\n" +
-                "delete from cache;\n" +
-                "insert into userinfo values(1, test, Test, User, no@no.no);\n" +
-                "insert into preferences values(1, 1, search1, link11, refined11);\n" +
-                "insert into preferences values(2, 1, search1, link12, refined12);\n" +
-                "insert into preferences values(3, 2, search2, link21, refined21);\n" +
-                "insert into preferences values(4, 2, search2, link22, refined22);\n" +
-                "insert into preferences values(4, 3, search3, link22, refined22);\n" +
+        long res = 0;
+        res += db.delete("preferences", null, null);
+        res += db.delete("userinfo", null, null);
+        res += db.delete("cache", null, null);
+        Log.i("Rows deletes", res + "");
+
+        ContentValues contentValues = new ContentValues();
+        res = 0;
+
+        contentValues.put("pid", 1);
+        contentValues.put("subs_id", 1);
+        contentValues.put("search_param", "search1");
+        contentValues.put("link", "link11");
+        contentValues.put("refined", "refined11");
+        res += db.insert("preferences", null, contentValues);
+
+        contentValues.put("pid", 2);
+        contentValues.put("subs_id", 1);
+        contentValues.put("search_param", "search1");
+        contentValues.put("link", "link12");
+        contentValues.put("refined", "refined12");
+        res += db.insert("preferences", null, contentValues);
+
+        contentValues.put("pid", 3);
+        contentValues.put("subs_id", 2);
+        contentValues.put("search_param", "search2");
+        contentValues.put("link", "link21");
+        contentValues.put("refined", "refined21");
+        res += db.insert("preferences", null, contentValues);
+
+        contentValues.put("pid", 4);
+        contentValues.put("subs_id", 2);
+        contentValues.put("search_param", "search2");
+        contentValues.put("link", "link22");
+        contentValues.put("refined", "refined22");
+        res += db.insert("preferences", null, contentValues);
+
+        contentValues.put("pid", 4);
+        contentValues.put("subs_id", 3);
+        contentValues.put("search_param", "search3");
+        contentValues.put("link", "link22");
+        contentValues.put("refined", "refined22");
+        res += db.insert("preferences", null, contentValues);
+
+        contentValues.put("uid", 1);
+        contentValues.put("uname", "test");
+        contentValues.put("fname", "Test");
+        contentValues.put("lname", "user");
+        contentValues.put("email", "no@no.no");
+        res += db.insert("userinfo", null, contentValues);
+
+        String sql =
                 "insert into cache values(fb, content1, iu1, 1, u1, \'2016-03-13 10:10:10 \');\n" +
                 "insert into cache values(tw, content2, iu2, 1, u2, \'2016-03-13 10:10:12 \');\n" +
-                "insert into cache values(yt, content3, iu3, 1, u3, \'2016-03-13 10:10:13 \');\n" +
-                "insert into cache values(fb, content4, iu4, 2, u4, \'2016-03-13 10:10:14 \');\n" +
-                "insert into cache values(tw, content5, iu5, 2, u5, \'2016-03-13 10:10:15 \');\n" +
-                "insert into cache values(fb, content6, iu6, 3, u6, \'2016-03-13 10:10:16 \');\n" +
-                "insert into cache values(fb, content7, iu7, 4, u7, \'2016-03-13 10:10:17 \');\n";
+                        "insert into cache values(yt, content3, iu3, 1, u3, \'2016-03-13 10:10:13 \');\n" +
+                        "insert into cache values(fb, content4, iu4, 2, u4, \'2016-03-13 10:10:14 \');\n" +
+                        "insert into cache values(tw, content5, iu5, 2, u5, \'2016-03-13 10:10:15 \');\n" +
+                        "insert into cache values(fb, content6, iu6, 3, u6, \'2016-03-13 10:10:16 \');\n" +
+                        "insert into cache values(fb, content7, iu7, 4, u7, \'2016-03-13 10:10:17 \');\n";
 
         db.execSQL(sql);
 
+        db.close();
     }
 
+    public Map<String, Long> get_preference_names() {
+        Map<String, Long> prefs = new HashMap<>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "select distinct search_param, subs_id from preferences; ";
+        Cursor c = db.rawQuery(sql, null);
+
+        Log.i("Rows selected", "" + c.getCount());
+
+        c.moveToFirst();
+        do {
+            prefs.put(c.getString(c.getColumnIndex("search_param")), new Long(c.getLong(c.getColumnIndex("subs_id"))));
+        } while (c.moveToNext());
+
+        c.close();
+        db.close();
+        return prefs;
+    }
 }

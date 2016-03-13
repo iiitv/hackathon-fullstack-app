@@ -1,14 +1,12 @@
 package com.hackathon.fulstack.hackathon_fullstack_app.Activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,29 +19,33 @@ import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.SessionManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.R;
 
-import java.util.ArrayList;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     SessionManager session;
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
-    private ArrayAdapter<String> mAdapter;
+    private ArrayAdapter mAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
     private String mActivityTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         session = new SessionManager(this);
 
-        if(!session.isLoggedIn()) {
+        simulate_data();
+
+        if (!session.isLoggedIn()) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
         setContentView(R.layout.activity_main);
 
-        mDrawerList = (ListView)findViewById(R.id.navList);mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.navList);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mActivityTitle = getTitle().toString();
 
         addDrawerItems();
@@ -54,27 +56,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
     private void addDrawerItems() {
-
-        DatabaseManager db = new DatabaseManager(this);
-        //start
-        ArrayList<String> strings = new ArrayList<String>();
-        String query = String.format("SELECT * FROM notes");
-        Cursor c = db.getReadableDatabase().rawQuery(query, null);
-
-
-
-
-        //end
-
-        //String[] osArray = { "Roger Federer", "Ray Kon", "Yuvraj", "Indian Fashion", "Linux" };
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strings);
+        Log.i("MainActivity:", "Setting up drawer");
+        Map<String, Long> list = DatabaseManager.getInstance(this).get_preference_names();
+        mAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list.keySet().toArray());
         mDrawerList.setAdapter(mAdapter);
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, "Time for an upgrade!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Selected Pos: " + position + " ID: " + id, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -85,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("Navigation!");
+                getSupportActionBar().setTitle("Navigation");
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
@@ -130,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         //if (id == R.id.action_settings) {
-          //  return true;
+        //  return true;
         //}
 
         // Activate the navigation drawer toggle
@@ -140,4 +132,11 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void simulate_data() {
+        SessionManager.setLoginStatus(true);
+        session.setUser("test");
+        DatabaseManager.getInstance(this).add_dummy_data();
+    }
+
 }
