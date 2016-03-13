@@ -24,7 +24,11 @@
         <activity
             android:name=".Activity.LoginActivity"
             android:label="@string/title_activity_login" />
-        <activity android:name=".Activity.RegisterActivity"></activity>
+        <activity android:name=".Activity.RegisterActivity" />
+        <activity
+            android:name=".Activity.add_preference"
+            android:label="@string/title_activity_add_preference"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

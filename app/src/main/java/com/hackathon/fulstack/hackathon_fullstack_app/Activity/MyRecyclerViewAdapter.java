@@ -1,4 +1,4 @@
-package com.hackathon.fulstack.hackathon_fullstack_app.Adapters;
+package com.hackathon.fulstack.hackathon_fullstack_app.Activity;
 
 /**
  * Created by pratyush on 13/3/16.
@@ -106,7 +106,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
             refine = (TextView) itemView.findViewById(R.id.refine);
             img = (TextView) itemView.findViewById(R.id.TagChar);
             dateTime = (TextView) itemView.findViewById(R.id.time);
-            content = (TextView) itemView.findViewById(R.id.content);
+           // content = (TextView) itemView.findViewById(R.id.content);
             Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
         }

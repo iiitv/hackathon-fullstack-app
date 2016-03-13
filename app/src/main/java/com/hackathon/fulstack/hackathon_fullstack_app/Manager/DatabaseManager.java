@@ -118,6 +118,29 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     }
 
+    public ArrayList<Preference> get_preferences() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "select pid from preferences;" ;
+        Cursor c = db.rawQuery(sql, null);
+
+        c.moveToFirst();
+
+        ArrayList<Preference> arr = new ArrayList<>();
+
+        if(!c.isAfterLast()) {
+            do {
+                arr.add(
+                        get_preference(
+                                c.getLong(0)
+                        )
+                );
+            } while (c.moveToNext());
+        }
+
+        return arr;
+    }
+
     ArrayList<Feed> get_feeds_for_subs_id(int subs_id) {
         ArrayList<Feed> ret = new ArrayList<>();
 

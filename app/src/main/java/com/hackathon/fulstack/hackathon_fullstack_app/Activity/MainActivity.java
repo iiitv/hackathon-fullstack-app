@@ -17,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.hackathon.fulstack.hackathon_fullstack_app.Adapters.MyRecyclerViewAdapter;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.SessionManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.Models.Feed;
