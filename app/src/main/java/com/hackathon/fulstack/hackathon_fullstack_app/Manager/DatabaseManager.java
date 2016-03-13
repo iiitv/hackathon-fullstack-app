@@ -283,6 +283,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
                         sql = "";
 
+                        Log.i("Number of feed objects", jarr.length() + "");
+
                         for (int i = 0; i < jarr.length(); i++) {
                             JSONObject temp = (JSONObject) jarr.get(i);
                             sql = sql +
@@ -296,7 +298,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
                             sql = sql + "," +
                                     temp.getInt("pid") + "," +
                                     temp.getString("url") + "," +
-                                    temp.getString("pubtime") +
+                                    temp.getString("time") +
                                     ");";
                         }
 
