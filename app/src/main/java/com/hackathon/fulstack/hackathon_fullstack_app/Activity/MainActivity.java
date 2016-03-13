@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,12 +19,14 @@ import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.SessionManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.R;
 
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
     SessionManager session;
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
-    private ArrayAdapter<String> mAdapter;
+    private ArrayAdapter mAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
     private String mActivityTitle;
 
@@ -55,14 +58,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addDrawerItems() {
-        String[] osArray = DatabaseManager.getInstance(this).get_preference_names();
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
+        Log.i("MainActivity:", "Setting up drawer");
+        Map<String, Long> list = DatabaseManager.getInstance(this).get_preference_names();
+        mAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list.keySet().toArray());
         mDrawerList.setAdapter(mAdapter);
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, "Time for an upgrade!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Selected Pos: " + position + " ID: " + id, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -73,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("Navigation!");
+                getSupportActionBar().setTitle("Navigation");
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
