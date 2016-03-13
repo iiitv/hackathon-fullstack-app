@@ -65,7 +65,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         Log.i(log, "Created table userinfo");
 
         sql = "create table if not exists preferences (" +
-                "pid integer primary key not null," +
+                "pid integer not null," +
                 "subs_id integer not null," +
                 "search_param text not null," +
                 "link text not null," +
@@ -78,7 +78,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 "src text not null," +
                 "content text," +
                 "img_url text," +
-                "pid integer references preference(pid)," +
+                "pid integer," +
                 "url text not null," +
                 "pub_time text not null" +
                 ");";
@@ -321,6 +321,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         contentValues.put("refined", "refined11");
         res += db.insert("preferences", null, contentValues);
 
+        contentValues = new ContentValues();
         contentValues.put("pid", 2);
         contentValues.put("subs_id", 1);
         contentValues.put("search_param", "search1");
@@ -328,6 +329,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         contentValues.put("refined", "refined12");
         res += db.insert("preferences", null, contentValues);
 
+        contentValues = new ContentValues();
         contentValues.put("pid", 3);
         contentValues.put("subs_id", 2);
         contentValues.put("search_param", "search2");
@@ -335,6 +337,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         contentValues.put("refined", "refined21");
         res += db.insert("preferences", null, contentValues);
 
+        contentValues = new ContentValues();
         contentValues.put("pid", 4);
         contentValues.put("subs_id", 2);
         contentValues.put("search_param", "search2");
@@ -342,6 +345,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         contentValues.put("refined", "refined22");
         res += db.insert("preferences", null, contentValues);
 
+        contentValues = new ContentValues();
         contentValues.put("pid", 4);
         contentValues.put("subs_id", 3);
         contentValues.put("search_param", "search3");
@@ -349,6 +353,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         contentValues.put("refined", "refined22");
         res += db.insert("preferences", null, contentValues);
 
+        contentValues = new ContentValues();
         contentValues.put("uid", 1);
         contentValues.put("uname", "test");
         contentValues.put("fname", "Test");
@@ -356,16 +361,22 @@ public class DatabaseManager extends SQLiteOpenHelper {
         contentValues.put("email", "no@no.no");
         res += db.insert("userinfo", null, contentValues);
 
-        String sql =
-                "insert into cache values(fb, content1, iu1, 1, u1, \'2016-03-13 10:10:10 \');\n" +
-                "insert into cache values(tw, content2, iu2, 1, u2, \'2016-03-13 10:10:12 \');\n" +
-                        "insert into cache values(yt, content3, iu3, 1, u3, \'2016-03-13 10:10:13 \');\n" +
-                        "insert into cache values(fb, content4, iu4, 2, u4, \'2016-03-13 10:10:14 \');\n" +
-                        "insert into cache values(tw, content5, iu5, 2, u5, \'2016-03-13 10:10:15 \');\n" +
-                        "insert into cache values(fb, content6, iu6, 3, u6, \'2016-03-13 10:10:16 \');\n" +
-                        "insert into cache values(fb, content7, iu7, 4, u7, \'2016-03-13 10:10:17 \');\n";
-
+        String sql;
+        sql = "insert into cache values(\'fb\', \'content1\', \'iu1\', 1, \'u1\', \'2016-03-13 10:10:10\');\n";
         db.execSQL(sql);
+        sql = "insert into cache values(\'tw\', \'content2\', \'iu2\', 1, \'u2\', \'2016-03-13 10:10:12\');\n";
+        db.execSQL(sql);
+        sql = "insert into cache values(\'yt\', \'content3\', \'iu3\', 1, \'u3\', \'2016-03-13 10:10:13\');\n";
+        db.execSQL(sql);
+        sql = "insert into cache values(\'fb\', \'content4\', \'iu4\', 2, \'u4\', \'2016-03-13 10:10:14\');\n";
+        db.execSQL(sql);
+        sql = "insert into cache values(\'tw\', \'content5\', \'iu5\', 2, \'u5\', \'2016-03-13 10:10:15\');\n";
+        db.execSQL(sql);
+        sql = "insert into cache values(\'fb\', \'content6\', \'iu6\', 3, \'u6\', \'2016-03-13 10:10:16\');\n";
+        db.execSQL(sql);
+        sql = "insert into cache values(\'fb\', \'content7\', \'iu7\', 4, \'u7\', \'2016-03-13 10:10:17\');\n";
+        db.execSQL(sql);
+
 
         db.close();
     }
@@ -397,6 +408,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String sql = "select * from cache order by Date(pub_time) desc;";
         Cursor c = db.rawQuery(sql, null);
 
+        Log.i("Feed Rows selected", "" + c.getCount());
+
         ArrayList<Feed> arr = new ArrayList<>();
 
         c.moveToFirst();
@@ -414,6 +427,29 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 );
             } while (c.moveToNext());
         }
+        c.close();
+        db.close();
         return arr;
+    }
+
+    public Preference get_preference_by_id(long pid) {
+        String sql = "select * from preferences where pid = " + pid + ";";
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor c = db.rawQuery(sql, null);
+
+        c.moveToFirst();
+        Preference ret = new Preference(
+                c.getLong(c.getColumnIndex("pid")),
+                c.getLong(c.getColumnIndex("subs_id")),
+                c.getString(c.getColumnIndex("search_param")),
+                c.getString(c.getColumnIndex("link")),
+                c.getString(c.getColumnIndex("refined"))
+        );
+        c.close();
+        db.close();
+
+        return ret;
     }
 }

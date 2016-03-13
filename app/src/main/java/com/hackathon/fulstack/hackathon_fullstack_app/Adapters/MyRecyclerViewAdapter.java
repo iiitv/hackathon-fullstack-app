@@ -4,6 +4,7 @@ package com.hackathon.fulstack.hackathon_fullstack_app.Adapters;
  * Created by pratyush on 13/3/16.
  */
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
 import com.hackathon.fulstack.hackathon_fullstack_app.Models.Feed;
+import com.hackathon.fulstack.hackathon_fullstack_app.Models.Preference;
 import com.hackathon.fulstack.hackathon_fullstack_app.R;
 
 import java.util.ArrayList;
@@ -21,10 +24,12 @@ public class MyRecyclerViewAdapter extends RecyclerView
         .DataObjectHolder> {
     private static String LOG_TAG = "MyRecyclerViewAdapter";
     private static MyClickListener myClickListener;
+    Context context;
     private ArrayList<Feed> mDataset;
 
-    public MyRecyclerViewAdapter(ArrayList<Feed> myDataset) {
+    public MyRecyclerViewAdapter(ArrayList<Feed> myDataset, Context context) {
         mDataset = myDataset;
+        this.context = context;
     }
 
     public void setOnItemClickListener(MyClickListener myClickListener) {
@@ -43,8 +48,18 @@ public class MyRecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        holder.label.setText(mDataset.get(position).getSrc());
-        holder.dateTime.setText(mDataset.get(position).getTime());
+
+        Preference temp = DatabaseManager.getInstance(context).get_preference_by_id(mDataset.get(position).pid);
+
+        holder.img.setText(mDataset.get(position).src.substring(0, 1));
+        holder.dateTime.setText(timediff(mDataset.get(position).time));
+        holder.content.setText(mDataset.get(position).content);
+        holder.search.setText(temp.search_param);
+        holder.refine.setText(temp.refine);
+    }
+
+    String timediff(String time) {
+        return "0h";
     }
 
     public void addItem(Feed dataObj, int index) {
@@ -69,13 +84,17 @@ public class MyRecyclerViewAdapter extends RecyclerView
     public static class DataObjectHolder extends RecyclerView.ViewHolder
             implements View
             .OnClickListener {
-        TextView label;
+        TextView refine, search, img;
+        TextView content;
         TextView dateTime;
 
         public DataObjectHolder(View itemView) {
             super(itemView);
-            label = (TextView) itemView.findViewById(R.id.actual);
+            search = (TextView) itemView.findViewById(R.id.actual);
+            refine = (TextView) itemView.findViewById(R.id.refine);
+            img = (TextView) itemView.findViewById(R.id.TagChar);
             dateTime = (TextView) itemView.findViewById(R.id.time);
+            content = (TextView) itemView.findViewById(R.id.content);
             Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
         }

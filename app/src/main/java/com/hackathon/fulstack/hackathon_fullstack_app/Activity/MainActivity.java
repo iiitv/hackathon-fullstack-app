@@ -42,15 +42,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        session = new SessionManager(this);
 
         simulate_data();
 
-        session = new SessionManager(this);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerGroups);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapterRecycler = new MyRecyclerViewAdapter(getDataSet(-1));
+        mAdapterRecycler = new MyRecyclerViewAdapter(getDataSet(-1), this);
         mRecyclerView.setAdapter(mAdapterRecycler);
 
 
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
-        setContentView(R.layout.activity_main);
 
         mDrawerList = (ListView) findViewById(R.id.navList);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

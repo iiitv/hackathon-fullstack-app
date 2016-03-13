@@ -5,12 +5,12 @@ package com.hackathon.fulstack.hackathon_fullstack_app.Models;
  */
 public class Feed {
 
-    String src;
-    String content;
-    String image_url;
-    long pid;
-    String url;
-    String time;
+    public String src;
+    public String content;
+    public String image_url;
+    public long pid;
+    public String url;
+    public String time;
 
     public Feed(String src, String content, String image_url, long pid, String url, String time) {
         this.src = src;
@@ -28,14 +28,6 @@ public class Feed {
         this.pid = pid;
         this.url = url;
         this.time = time;
-    }
-    public String getSrc()
-    {
-        return src;
-    }
-    public String getTime()
-    {
-        return time;
     }
 
 }
