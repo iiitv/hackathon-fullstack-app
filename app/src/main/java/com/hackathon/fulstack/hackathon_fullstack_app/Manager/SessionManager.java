@@ -48,4 +48,13 @@ public class SessionManager {
         editor.putString("user", user);
         editor.commit();
     }
+
+    public int getUserID() {
+        return preferences.getInt("userID", -1);
+    }
+
+    public void setUserID(int id) {
+        editor.putInt("userID", id);
+        editor.commit();
+    }
 }
