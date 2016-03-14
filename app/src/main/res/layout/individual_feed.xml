@@ -90,11 +90,6 @@
             </LinearLayout>
 
 
-
-
-
-
-
         </RelativeLayout>
 
         <RelativeLayout
@@ -103,7 +98,8 @@
             android:layout_height="100dp"
             android:layout_below="@+id/above"
             android:orientation="horizontal">
-            <ImageView
+
+        <ImageView
 
                 android:id="@+id/divider"
                 android:layout_width="match_parent"

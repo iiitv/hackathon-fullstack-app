@@ -133,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
     }
 
@@ -146,28 +145,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        //if (id == R.id.action_settings) {
-        //  return true;
-        //}
 
         // Activate the navigation drawer toggle
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-       // return super.onOptionsItemSelected(item);
-        switch (item.getItemId())
-        {
+        // return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
             case R.id.menu_bookmark:
                 // Single menu item is selected do something
                 // Ex: launching new activity/screen or show alert message
                 Toast.makeText(this, "Preferences is Selected", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this,add_preference.class);
+                Intent intent = new Intent(this, PreferenceActivity.class);
                 startActivity(intent);
                 return true;
 
@@ -185,11 +176,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
 
-
             default:
                 return super.onOptionsItemSelected(item);
         }
-
 
 
     }
@@ -199,8 +188,8 @@ public class MainActivity extends AppCompatActivity {
         session.setUser("test");
         DatabaseManager.getInstance(this).add_dummy_data();
     }
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu, menu);
         return true;

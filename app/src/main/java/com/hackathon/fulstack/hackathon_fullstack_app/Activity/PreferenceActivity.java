@@ -20,7 +20,7 @@ public class PreferenceActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayoutManager;
     RecyclerViewAdapter mAdapter;
-    String LOG_TAG="RecylerListFeeds";
+    String LOG_TAG = "RecylerListFeeds";
 
 
     @Override
@@ -48,8 +48,6 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
 
     private ArrayList<Preference> getDataSet() {

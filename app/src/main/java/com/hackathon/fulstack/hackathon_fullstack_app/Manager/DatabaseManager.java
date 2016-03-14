@@ -123,14 +123,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public ArrayList<Preference> get_preferences() {
         SQLiteDatabase db = getReadableDatabase();
 
-        String sql = "select pid from preferences;" ;
+        String sql = "select pid from preferences;";
         Cursor c = db.rawQuery(sql, null);
 
         c.moveToFirst();
 
         ArrayList<Preference> arr = new ArrayList<>();
 
-        if(!c.isAfterLast()) {
+        if (!c.isAfterLast()) {
             do {
                 arr.add(
                         get_preference(
