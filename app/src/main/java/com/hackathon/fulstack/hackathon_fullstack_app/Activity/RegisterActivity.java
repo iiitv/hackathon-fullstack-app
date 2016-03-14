@@ -103,13 +103,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                     JSONObject obj = new JSONObject(s);
 
-                    if (obj.getInt("status") == 200) {
+                    if (obj.getInt("code") == 200) {
                         loading_dial.hide();
                         Toast.makeText(getApplicationContext(), "Registered on WTF", Toast.LENGTH_SHORT).show();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
+                        finish();
                     } else {
                         loading_dial.hide();
-                        Toast.makeText(getApplicationContext(), "Error : " + obj.getString("error"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Error : " + obj.getString("message"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -129,8 +131,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("username", usernameStr);
                 params.put("password", passwordStr);
-                params.put("fname", fnameStr);
-                params.put("lname", lnameStr);
+                params.put("firstname", fnameStr);
+                params.put("lastname", lnameStr);
                 params.put("email", emailStr);
                 return params;
             }
