@@ -29,7 +29,6 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static String LOG_TAG = "CardViewActivity";
     SessionManager session;
     Context context;
     private ListView mDrawerList;
@@ -60,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (!session.isLoggedIn()) {
             Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            finish();
         }
 
         mDrawerList = (ListView) findViewById(R.id.navList);
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         MenuInflater menuInflater = getMenuInflater();
 
+        DatabaseManager.getInstance(this).get_new_feed_all(mRecyclerView);
 
     }
 
@@ -172,7 +174,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_save:
                 Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
                 SessionManager session = new SessionManager(this);
-                session.setLoginStatus(false);
+                SessionManager.setLoginStatus(false);
+                startActivity(new Intent(context, LoginActivity.class));
 
 
                 return true;

@@ -119,7 +119,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         session.setUser(username);
                         session.setUserID(loginOBJ.getInt("id"));
                         loading_dial.hide();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
+                        finish();
                     } else {
                         loading_dial.hide();
                         Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
