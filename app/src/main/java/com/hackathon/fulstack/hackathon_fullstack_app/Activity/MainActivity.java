@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         session = new SessionManager(this);
 
-        //simulate_data();
+        simulate_data();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerGroups);
         mRecyclerView.setHasFixedSize(true);

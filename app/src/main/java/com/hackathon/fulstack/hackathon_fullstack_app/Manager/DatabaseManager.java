@@ -112,7 +112,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         Long subs_id = c.getLong(c.getColumnIndex("subs_id"));
         search_param = c.getString(c.getColumnIndex("search_param"));
         link = c.getString(c.getColumnIndex("link"));
-        refine = c.getString(c.getColumnIndex("refine"));
+        refine = c.getString(c.getColumnIndex("refined"));
         c.close();
         db.close();
 
