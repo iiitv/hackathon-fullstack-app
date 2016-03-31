@@ -395,6 +395,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
         res += db.insert("preferences", null, contentValues);
 
         contentValues = new ContentValues();
+        contentValues.put("pid", 4);
+        contentValues.put("subs_id", 3);
+        contentValues.put("search_param", "search3");
+        contentValues.put("link", "link22");
+        contentValues.put("refined", "refined23");
+        res += db.insert("preferences", null, contentValues);
+
+        contentValues = new ContentValues();
         contentValues.put("uid", 1);
         contentValues.put("uname", "test");
         contentValues.put("fname", "Test");

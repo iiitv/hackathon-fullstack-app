@@ -4,7 +4,7 @@
 
 You can find the backend's source and learn more about the service at https://github.com/iiitv/hackathon-fullstack-server
 
-
+#### It was selected as the best project in Tech category @
 
 ### Installation
 

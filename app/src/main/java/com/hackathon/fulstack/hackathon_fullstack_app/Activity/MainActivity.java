@@ -79,9 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void set_recycler_adapter(int i) {
-    }
-
     private ArrayList<Feed> getDataSet(int id) {
         if (id == -1)
             return DatabaseManager.getInstance(this).get_feeds();
