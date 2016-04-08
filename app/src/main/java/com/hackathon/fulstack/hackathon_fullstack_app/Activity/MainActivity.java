@@ -153,18 +153,16 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_bookmark:
                 // Single menu item is selected do something
                 // Ex: launching new activity/screen or show alert message
-                Toast.makeText(this, "Preferences is Selected", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, PreferenceActivity.class);
                 startActivity(intent);
                 return true;
 
             case R.id.menu_save:
-                Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
-                SessionManager session = new SessionManager(this);
                 SessionManager.setLoginStatus(false);
-                startActivity(new Intent(context, LoginActivity.class));
-
-
+                Intent i = new Intent(context, LoginActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+                finish();
                 return true;
 
             case R.id.menu_search:
