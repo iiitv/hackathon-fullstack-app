@@ -154,7 +154,9 @@ public class MainActivity extends AppCompatActivity {
                 // Single menu item is selected do something
                 // Ex: launching new activity/screen or show alert message
                 Intent intent = new Intent(this, PreferenceActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                finish();
                 return true;
 
             case R.id.menu_save:
@@ -188,10 +190,5 @@ public class MainActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.menu, menu);
         return true;
     }
-
-    /**
-     * Event Handling for Individual menu item selected
-     * Identify single menu item by it's id
-     * */
 }
 

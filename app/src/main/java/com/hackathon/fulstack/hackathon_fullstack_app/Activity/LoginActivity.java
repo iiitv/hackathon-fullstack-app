@@ -119,6 +119,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DatabaseManager.getInstance(getApplicationContext()).add_preferences(arr);
                         SessionManager.setLoginStatus(true);
                         session.setUser(username);
+                        session.setPass(phash);
                         session.setUserID(loginOBJ.getInt("id"));
                         loading_dial.hide();
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

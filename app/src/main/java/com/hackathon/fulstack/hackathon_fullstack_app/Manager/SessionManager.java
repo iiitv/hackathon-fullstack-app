@@ -57,4 +57,13 @@ public class SessionManager {
         editor.putInt("userID", id);
         editor.commit();
     }
+
+    public String getPass() {
+        return preferences.getString("phash", "");
+    }
+
+    public void setPass(String pass) {
+        editor.putString("phash", pass);
+        editor.commit();
+    }
 }

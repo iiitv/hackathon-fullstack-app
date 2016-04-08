@@ -21,7 +21,7 @@
         android:layout_alignParentTop="true" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -32,7 +32,7 @@
         android:id="@+id/recyclerPrefs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button"
+        android:layout_below="@+id/buttonAdd"
         android:elevation="10dp" />
 
 
