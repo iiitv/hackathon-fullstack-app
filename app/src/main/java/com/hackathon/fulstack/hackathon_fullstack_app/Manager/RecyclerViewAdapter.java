@@ -5,7 +5,6 @@ package com.hackathon.fulstack.hackathon_fullstack_app.Manager;
  */
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,8 +42,7 @@ public class RecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        holder.searchParam.setText(mDataset.get(position).search_param);
-        holder.refine1.setText(mDataset.get(position).refine);
+        holder.refine1.setText(mDataset.get(position).search_param + " -> " + mDataset.get(position).refine);
     }
 
     public void addItem(Preference dataObj, int index) {
@@ -64,6 +62,7 @@ public class RecyclerViewAdapter extends RecyclerView
 
     public interface MyClickListener {
         void onItemClick(int position, View v);
+
     }
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder
@@ -74,9 +73,7 @@ public class RecyclerViewAdapter extends RecyclerView
 
         public DataObjectHolder(View itemView) {
             super(itemView);
-            searchParam = (TextView) itemView.findViewById(R.id.searchParamVar);
             refine1 = (TextView) itemView.findViewById(R.id.refine1);
-            Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
         }
 
@@ -86,5 +83,3 @@ public class RecyclerViewAdapter extends RecyclerView
         }
     }
 }
-
-

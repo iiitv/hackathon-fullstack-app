@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
@@ -21,7 +20,6 @@ public class PreferenceActivity extends AppCompatActivity {
     LinearLayoutManager mLayoutManager;
     RecyclerViewAdapter mAdapter;
     String LOG_TAG = "RecylerListFeeds";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +42,7 @@ public class PreferenceActivity extends AppCompatActivity {
                 .MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                Log.i(LOG_TAG, " Clicked on Item " + position);
+
             }
         });
     }
