@@ -5,11 +5,15 @@ package com.hackathon.fulstack.hackathon_fullstack_app.Activity;
  */
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hackathon.fulstack.hackathon_fullstack_app.Manager.DatabaseManager;
@@ -17,6 +21,7 @@ import com.hackathon.fulstack.hackathon_fullstack_app.Models.Feed;
 import com.hackathon.fulstack.hackathon_fullstack_app.Models.Preference;
 import com.hackathon.fulstack.hackathon_fullstack_app.R;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MyRecyclerViewAdapter extends RecyclerView
@@ -40,8 +45,9 @@ public class MyRecyclerViewAdapter extends RecyclerView
     @Override
     public DataObjectHolder onCreateViewHolder(ViewGroup parent,
                                                int viewType) {
+
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.individual_feed, parent, false);
+                .inflate(R.layout.individual_feed_image, parent, false);
 
         DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
         return dataObjectHolder;
@@ -57,6 +63,8 @@ public class MyRecyclerViewAdapter extends RecyclerView
         holder.content.setText(mDataset.get(position).content);
         holder.search.setText(temp.search_param);
         holder.refine.setText(temp.refine);
+        Log.i("Downloading Image ", mDataset.get(position).image_url);
+        new DownloadImageTask(holder.image).execute(mDataset.get(position).image_url);
     }
 
     String timediff(String time) {
@@ -93,13 +101,22 @@ public class MyRecyclerViewAdapter extends RecyclerView
         void onItemClick(int position, View v);
     }
 
-    public static class DataObjectHolder extends RecyclerView.ViewHolder
-            implements View
-            .OnClickListener {
+    public static class MasterHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public MasterHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void onClick(View v) {
+
+        }
+    }
+
+    public static class DataObjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView refine, search, img;
         TextView content;
         TextView dateTime;
-
+        ImageView image;
         public DataObjectHolder(View itemView) {
             super(itemView);
             search = (TextView) itemView.findViewById(R.id.actual);
@@ -107,12 +124,36 @@ public class MyRecyclerViewAdapter extends RecyclerView
             img = (TextView) itemView.findViewById(R.id.TagChar);
             dateTime = (TextView) itemView.findViewById(R.id.time);
             content = (TextView) itemView.findViewById(R.id.content);
-            Log.i(LOG_TAG, "Adding Listener");
-            itemView.setOnClickListener(this);
+            image = (ImageView) itemView.findViewById(R.id.post_image);
         }
-
         @Override
         public void onClick(View v) {
+
+        }
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
         }
     }
 

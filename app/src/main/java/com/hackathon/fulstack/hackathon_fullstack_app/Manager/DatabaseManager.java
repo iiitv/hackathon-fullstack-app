@@ -148,7 +148,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getReadableDatabase();
 
-        String sql = "select cache.*  from preference natural join cache where preference.search_param = " + subs_id + " order by date(pub_time) desc;";
+        String sql = "select cache.*  from preferences natural join cache where preferences.search_param = " + subs_id + " order by date(pub_time) desc;";
         Cursor c = db.rawQuery(sql, null);
 
         c.moveToFirst();
@@ -185,9 +185,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
             contentValues.put("link", temp.link);
             contentValues.put("refined", temp.refine);
             Log.i("Insert status", "" + db.insert("preferences", null, contentValues));
-//            sql =
-//                    "insert into preferences values(" + temp.pid + "," + temp.subs_id + "," + temp.search_param + "," + temp.link + "," + temp.refine + ");\n";
-//            db.execSQL(sql);
         }
         db.close();
     }
@@ -196,6 +193,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         StringRequest request = new StringRequest(Request.Method.POST, Config.all_feed_url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
+                Log.i("Get all feed response: ", s);
 
                 SQLiteDatabase db = getWritableDatabase();
 
@@ -216,7 +214,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
                                     "insert into cache values(\'" +
                                             temp.getString("network").replace("\'", "\'\'") + "\',\'" +
                                             temp.getString("content").replace("\'", "\'\'") + "\',\'";
-                            if (temp.getString("imageurl") == null)
+                            if (!temp.getString("imageurl").matches("null"))
                                 sql = sql + temp.getString("imageurl");
                             else
                                 sql = sql + "";
@@ -230,8 +228,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
                         }
 
                         db.close();
-                        ArrayList<Feed> a = get_feeds();
-                        Log.i("Feeds update", a.toString());
                         mAdapterRecycler.swapAdapter(new MyRecyclerViewAdapter(get_feeds(), context), true);
                     } else
                         Log.e("Database Manager1", "Unable to fetch feeds");
@@ -263,19 +259,20 @@ public class DatabaseManager extends SQLiteOpenHelper {
         AppManager.getInstance().addToRequestQueue(request, "allfeedupdate", this.context);
     }
 
-    public void get_new_feeds(final int subs_ids) {
+    public void get_new_feeds(final int subs_ids, final RecyclerView mAdapterRecycler) {
         StringRequest request = new StringRequest(Request.Method.POST, Config.single_feed_url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
+                Log.i("Get feed response: ", s);
 
                 SQLiteDatabase db = getWritableDatabase();
 
-                String sql = "delete from cache where pid in (select pid from preferences where subsid = " + subs_ids + ");";
+                String sql = "delete from cache where pid in (select pid from preferences where subs_id = " + subs_ids + ");";
 
                 try {
                     JSONObject response = new JSONObject(s);
 
-                    if (response.getInt("status") == 200) {
+                    if (response.getInt("code") == 200) {
 
                         db.execSQL(sql);
 
@@ -287,23 +284,25 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
                         for (int i = 0; i < jarr.length(); i++) {
                             JSONObject temp = (JSONObject) jarr.get(i);
-                            sql = sql +
-                                    "insert into cache values(" +
-                                    temp.getString("network") + "," +
-                                    temp.getString("content") + ",";
-                            if (temp.has("imgurl"))
-                                sql = sql + temp.getString("imgurl");
+                            sql =
+                                    "insert into cache values(\'" +
+                                            temp.getString("network").replace("\'", "\'\'") + "\',\'" +
+                                            temp.getString("content").replace("\'", "\'\'") + "\',\'";
+                            if (!temp.getString("imageurl").matches("null")) {
+                                sql = sql + temp.getString("imageurl");
+                            }
                             else
                                 sql = sql + "";
-                            sql = sql + "," +
-                                    temp.getInt("pid") + "," +
-                                    temp.getString("url") + "," +
+                            sql = sql + "\'," +
+                                    temp.getInt("pid") + ",\'" +
+                                    temp.getString("url") + "\',\'" +
                                     temp.getString("time") +
-                                    ");";
+                                    "\');";
+
+                            db.execSQL(sql);
                         }
 
-                        db.execSQL(sql);
-
+                        mAdapterRecycler.swapAdapter(new MyRecyclerViewAdapter(get_feeds_by_subscription(subs_ids), context), true);
                     }
 
                 } catch (JSONException e) {
@@ -515,6 +514,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         Cursor c = db.rawQuery(sql, null);
 
+        Log.i("Feed Rows Selected For " + id, "" + c.getCount());
+
         c.moveToFirst();
         if (!c.isAfterLast()) {
             do {
@@ -530,6 +531,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 );
             } while (c.moveToNext());
         }
+        c.close();
+        db.close();
 
         return feeds;
     }

@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         session = new SessionManager(this);
 
-        simulate_data();
+//        simulate_data();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerGroups);
         mRecyclerView.setHasFixedSize(true);
@@ -83,8 +83,6 @@ public class MainActivity extends AppCompatActivity {
         if (id == -1)
             return DatabaseManager.getInstance(this).get_feeds();
         ArrayList<Feed> c = DatabaseManager.getInstance(this).get_feeds_by_subscription(id);
-
-        Log.i("sds", c.toString());
         return c;
     }
 
@@ -100,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int _id = (int) (long) list.get(pos[position]);
+                DatabaseManager.getInstance(context).get_new_feeds(_id, mRecyclerView);
                 mRecyclerView.swapAdapter(new MyRecyclerViewAdapter(getDataSet(_id), context), true);
             }
         });

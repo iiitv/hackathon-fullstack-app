@@ -95,11 +95,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         for (int i = 0; i < jarr.length(); i++) {
                             JSONObject temp = (JSONObject) jarr.get(i);
+                            Log.i("Outer Index", "" + i + temp.toString());
                             long subs_id = temp.getInt("subsid");
                             String search_param = temp.getString("searchparam");
                             JSONArray jarrinner = temp.getJSONArray("links");
                             for (int j = 0; j < jarrinner.length(); j++) {
-                                JSONObject tempinner = (JSONObject) jarrinner.get(i);
+                                JSONObject tempinner = (JSONObject) jarrinner.get(j);
+                                Log.i("Inner Index", "" + j + tempinner.toString());
                                 String link = tempinner.getString("url");
                                 long pid = tempinner.getLong("pid");
                                 String refine = tempinner.getString("name");
