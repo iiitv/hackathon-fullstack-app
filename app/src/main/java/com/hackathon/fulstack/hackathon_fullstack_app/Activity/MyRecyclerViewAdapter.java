@@ -58,7 +58,12 @@ public class MyRecyclerViewAdapter extends RecyclerView
 
         Preference temp = DatabaseManager.getInstance(context).get_preference_by_id(mDataset.get(position).pid);
 
-        holder.img.setText(mDataset.get(position).src.substring(0, 1));
+        if (mDataset.get(position).src.matches("twitter"))
+            holder.img.setImageResource(R.mipmap.twitter);
+        else if (mDataset.get(position).src.matches("instagram"))
+            holder.img.setImageResource(R.mipmap.instagram);
+        else
+            holder.img.setImageResource(R.mipmap.tumblr);
         holder.dateTime.setText(timediff(mDataset.get(position).time));
         holder.content.setText(mDataset.get(position).content);
         holder.search.setText(temp.search_param);
@@ -113,15 +118,15 @@ public class MyRecyclerViewAdapter extends RecyclerView
     }
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView refine, search, img;
+        TextView refine, search;
         TextView content;
         TextView dateTime;
-        ImageView image;
+        ImageView image, img;
         public DataObjectHolder(View itemView) {
             super(itemView);
             search = (TextView) itemView.findViewById(R.id.actual);
             refine = (TextView) itemView.findViewById(R.id.refine);
-            img = (TextView) itemView.findViewById(R.id.TagChar);
+            img = (ImageView) itemView.findViewById(R.id.TagImg);
             dateTime = (TextView) itemView.findViewById(R.id.time);
             content = (TextView) itemView.findViewById(R.id.content);
             image = (ImageView) itemView.findViewById(R.id.post_image);

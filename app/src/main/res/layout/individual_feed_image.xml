@@ -37,15 +37,11 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="5dp">
 
-                    <TextView
-                        android:id="@+id/TagChar"
+                    <ImageView
+                        android:id="@+id/TagImg"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:background="@drawable/tag_bg"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:text="A"
-                        android:textColor="#ffffff"
-                        android:textSize="20dp" />
+                        android:gravity="center_vertical|center_horizontal" />
 
                 </RelativeLayout>
 
